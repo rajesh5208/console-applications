@@ -1,0 +1,55 @@
+package calltaxi;
+import java.util.*;
+
+public class Taxi {
+
+	private static int ID = 1;
+	private static int BOOKING_ID = 1;
+	
+	private int id; 
+	private int totalAmountEarned;
+	private ArrayList<Customer> customerObjs = new ArrayList<>();
+	
+	
+	Taxi(){
+		id = ID++;
+	}
+	
+	public static void tempTaxi(ArrayList<Taxi> taxies) {
+		for(int i=1; i<=4; i++)
+			taxies.add(new Taxi());
+	}
+	
+	public ArrayList<Customer> getCustomerObjs() {
+		return customerObjs;
+	}
+	
+	public int getEarnedAmount() {
+		return totalAmountEarned;
+	}
+	
+	public void printTaxiDetails() {
+		System.out.println("Taxi no : " + id + "\t\t Total Earnings : " + totalAmountEarned);
+		System.out.println("Booking Id \tCustomer Id \tFrom \tTo \tPickup Time \t Drop time \t Amount ");
+		for(Customer c : customerObjs) {
+			System.out.println("    " + c.getBookingId()+ "\t\t     "
+							 + c.getCustomerId()+ "\t\t "
+							 + c.getPickupPoint()+ "\t"
+							 + c.getDropPoint()+ "\t    "
+							 + c.getPickupTime()+ "\t\t    "
+							 + c.getDropTime()+ "\t\t   "
+							 + c.getPaidAmount());
+		}
+		System.out.println("-----------------------------------------------------------------------------------------");
+	}
+	
+	
+	
+	
+	public void bookTaxi(Customer c) {
+		c.setBookingId(BOOKING_ID++);
+		totalAmountEarned = totalAmountEarned + c.getPaidAmount();
+		customerObjs.add(c);
+	}
+	
+}
