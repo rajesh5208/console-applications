@@ -1,0 +1,73 @@
+package flightTicket;
+import java.util.*;
+
+public class Passenger {
+
+	private static int PASSENGERID=1;
+	
+	private int passengerID;
+	private String name;
+	private byte age;
+	private char gender;
+	private byte noOfTickets;
+	private int amountPaid;
+	private byte flightId;
+	private byte ticketNo;
+	
+	Passenger(){
+		Scanner scan2 = new Scanner(System.in);
+		passengerID = PASSENGERID++;
+		System.out.print("Enter the Passenger name : ");
+		name = scan2.nextLine();
+		System.out.print("Enter the passenger age : ");
+		age = scan2.nextByte();
+		System.out.print("Enter the passenger gender : [M, F]");
+		gender = scan2.next().charAt(0);
+		System.out.println("Enter no.of tickets want to book");
+		noOfTickets = scan2.nextByte();
+	}
+
+	public int getPassengerId() {
+		return passengerID;
+	}
+	
+	public String getPassengerName() {
+		return name;
+	}
+	
+	public byte getPassengerAge() {
+		return age;
+	}
+	
+	public char getPassengerGender() {
+		return gender;
+	}
+	
+	public byte getNoOfTickets() {
+		return noOfTickets;
+	}
+	
+	public int getTotalAmountPaid() {
+		return amountPaid;
+	}
+
+	public void setTotalAmountPaid(int n) {
+		amountPaid = n;
+	}
+	
+	public void setFlightId(int n) {
+		flightId = (byte)n;
+	}
+	
+	public byte getFlightId() {
+		return flightId;
+	}
+
+	public void setTicketId(int n) {
+		ticketNo = (byte)n;
+	}
+	
+	public byte getTicketId() {
+		return ticketNo;
+	}
+}
