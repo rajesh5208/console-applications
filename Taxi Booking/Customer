@@ -1,0 +1,67 @@
+package calltaxi;
+import java.util.*;
+
+public class Customer {
+
+	private int customerId;
+	private char from;
+	private char to;
+	private int pickupTime;
+	private int dropTime;
+	private int bookingId;
+	private int amountPaid;
+	
+	Customer(){
+		Scanner scan2 = new Scanner(System.in);
+		System.out.print("Enter pickup point : ");
+		from = scan2.next().charAt(0);
+		System.out.print("Enter drop point : ");
+		to = scan2.next().charAt(0);
+		System.out.print("Enter pickup time : ");
+		pickupTime = scan2.nextInt();
+	}
+	
+	public int getCustomerId() {
+		return customerId;
+	}
+	
+	public void setCustomerId(int n) {
+		customerId = n;
+	}
+	
+	public int getBookingId() {
+		return bookingId;
+	}
+	
+	public void setBookingId(int n) {
+		bookingId = n;
+	}
+	
+	public int getDropTime() {
+		return dropTime;
+	}
+	
+	public void setDropTime(int n) {
+		dropTime= n;
+	}
+	
+	public int getPaidAmount() {
+		return amountPaid;
+	}
+	
+	public void setpaidAmount(int n) {
+		amountPaid = n;
+	}
+	
+	public char getPickupPoint() {
+		return from;
+	}
+	
+	public char getDropPoint() {
+		return to;
+	}
+	
+	public int getPickupTime() {
+		return pickupTime;
+	}
+}
