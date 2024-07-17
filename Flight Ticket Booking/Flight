@@ -1,0 +1,82 @@
+package flightTicket;
+import java.util.*;
+
+public class Flight {
+	
+	private static int ID = 1;
+	private static int InitialTicketPrice = 5000;
+	private static int InitialSeats = 50;
+	
+	private byte flightId;
+	private byte availableSeats ;
+	private byte bookedSeats;
+	private int currentTicketPrice;
+	private int totalAmount;
+	private byte ticketNo;
+	
+	Flight(){
+		flightId = (byte)ID++;
+		availableSeats = (byte)InitialSeats;
+		currentTicketPrice = InitialTicketPrice;
+		ticketNo=1;
+	}
+	
+	public static void tempFlight(List<Flight> flights) {
+		for(int i=1; i<4; i++ ) {
+			flights.add(new Flight());
+		}
+	}
+	
+	public byte getFlightId() {
+		return flightId;
+	}
+	
+	public void printFlightSummary(List<?> passengers) {
+		System.out.println("-----------------------------------------------------");
+		System.out.println("Flight id       : " + flightId 
+					   + "\nAvailable Seats : " + availableSeats 
+					   + "\nBooked Seats    : " + bookedSeats
+					   + "\nCurrent Ticket Price : " + currentTicketPrice
+					   + "\n-----------------------------------------------------");
+		
+		for(int i=0; i<passengers.size(); i++) {
+			Passenger p = (Passenger) passengers.get(i);
+			if(p.getFlightId()==flightId) {
+				System.out.println("Passenger Name   : " + p.getPassengerName()
+							   + "\nPassenger Id     : " + p.getPassengerId()
+							   + "\nPassenger Age    : " + p.getPassengerAge()
+							   + "\nPassenger Gender : " + p.getPassengerGender()
+							   + "\nBooked Tickets   : " + p.getNoOfTickets()
+							   + "\nAmount Paid      : " + p.getTotalAmountPaid());
+				System.out.println();
+			}
+		}
+		System.out.println("\n");
+	}
+	
+	
+	public void bookTickets(Passenger p) {
+		if(availableSeats>=p.getNoOfTickets()) {
+			availableSeats = (byte) (availableSeats - p.getNoOfTickets());
+			bookedSeats = (byte) (bookedSeats + p.getNoOfTickets());
+			p.setTotalAmountPaid(currentTicketPrice*p.getNoOfTickets());
+			p.setTicketId(ticketNo++);
+			totalAmount = totalAmount + p.getTotalAmountPaid();
+			currentTicketPrice = currentTicketPrice + (200 * p.getNoOfTickets());
+		}
+		else {
+			System.out.println("Not enough tickets.");
+		}
+	}
+	
+	
+	public void cancelTickets(Passenger p) {
+		availableSeats = (byte) (availableSeats + p.getNoOfTickets());
+		bookedSeats = (byte) (bookedSeats - p.getNoOfTickets());
+		totalAmount = totalAmount - p.getTotalAmountPaid();
+		currentTicketPrice = currentTicketPrice - (200 * p.getNoOfTickets());
+		System.out.println("Refunded Amount : Rs." + p.getTotalAmountPaid());
+	}
+}
+
+
