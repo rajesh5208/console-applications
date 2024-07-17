@@ -1,0 +1,23 @@
+package airTrafficControl;
+
+public class TempThread extends Thread{
+
+	private int threadTime;
+	private Runway free;
+	
+	public TempThread(int threadTime, Runway free) {
+		this.threadTime = threadTime;
+		this.free = free;
+	}
+
+	public void run() {
+		free.setStatus(false);
+		try {
+			Thread.sleep(1000 * threadTime);
+			free.setStatus(true);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
