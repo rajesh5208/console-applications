@@ -1,0 +1,76 @@
+package flightTicket;
+import java.util.*;
+
+public class Main {
+	public static void main(String[] args) {
+		
+		Scanner scan = new Scanner(System.in);
+		int choice = 0;
+		
+		List<Flight> flights = new ArrayList<>();
+		Flight.tempFlight(flights); 
+		List<Passenger> passengers = new ArrayList<>();
+		
+		while(true) {
+			System.out.println("\n\n------------------------------"
+						   + "\n\t1.Book Ticket."
+						   + "\n\t2.Cancel Ticket."
+						   + "\n\t3.Flight Summary."
+						   + "\n\t4.Exit."
+						   + "\n------------------------------");
+			choice = scan.nextInt();
+
+			Switch:
+			switch(choice) {
+			
+				case 1:
+					System.out.print("Enter Flight ID : ");
+					int id= scan.nextInt();
+					for(Flight f : flights) {
+						if(f.getFlightId()==id) {
+							Passenger p = new Passenger();
+							p.setFlightId(id);
+							f.bookTickets(p);
+							passengers.add(p);
+							break Switch;
+						}
+					}
+					System.out.println("Invlid Flight ID.");
+					break;
+				
+				case 2:{
+					System.out.print("Enter Passenger Id : ");
+					int ID = scan.nextInt();
+					for(Passenger p : passengers) {
+						if(p.getPassengerId()==ID) {
+							for(Flight f : flights) {
+								if(f.getFlightId()==p.getFlightId()) {
+									f.cancelTickets(p);
+									passengers.remove(p);
+									break Switch;
+								}
+							}
+						}
+					}
+					System.out.println("Invalid Passenger Id.");
+					break;
+				}
+					
+				case 3:{
+					for(Flight f : flights) {
+						f.printFlightSummary(passengers);
+					}
+					break;
+				}
+					
+				case 4:{
+					scan.close();
+					System.exit(0);
+				}
+				default :{
+					System.out.println("Invalid choice.");
+				}
+			}	
+		}
+	}
+}
