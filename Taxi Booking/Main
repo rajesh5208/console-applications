@@ -1,1 +1,217 @@
+package calltaxi;
+import java.util.*;
+
+public class Main {
+	public static void main(String[] args) {
+		
+		Scanner scan = new Scanner(System.in);
+		int choice=0;
+		
+		ArrayList<Taxi> taxies = new ArrayList<>();
+		Taxi.tempTaxi(taxies);
+		ArrayList<Customer> customers = new ArrayList<>();
+		
+		while(true) {
+			
+			System.out.println("\n\n1.Book Taxi"
+							   + "\n2.Taxi Details"
+							   + "\n3.Exit");
+			choice = scan.nextInt();
+			
+			Switch:
+			switch(choice) {
+				case 1:{
+					System.out.print("Enter Customer id : ");
+					int id = scan.nextInt();
+					for(Customer c : customers) {
+						if(c.getCustomerId()==id) {
+							System.out.println("Customer id already exit.try another Id.");
+							break Switch;
+						}
+					}
+					Customer c = new Customer();
+					c.setCustomerId(id);
+					bookFreeTaxi(c,taxies,customers);
+					break;
+				}
+				
+				case 2:{
+					for(Taxi t : taxies) {
+						t.printTaxiDetails();
+					}
+					break;
+				}
+				
+				case 3:{
+					scan.close();
+					System.exit(0);
+				}
+				
+				default:
+					System.out.println("Invalid choice.");
+			}
+		}
+	}
+	
+	public static void  bookFreeTaxi(Customer c, ArrayList<Taxi> taxies, ArrayList<Customer> customers) {
+		
+		if(c.getPickupPoint()<'A' || c.getPickupPoint()>'F' || c.getDropPoint()<'A' || c.getDropPoint()>'F') {
+			System.out.println("Valid Pickup and Drop points are A,B,C,D,E and F. please choose valid Pickup/Drop points.");
+			return;
+		}
+	
+		c.setDropTime(c.getPickupTime() + Math.abs((c.getPickupPoint() - c.getDropPoint())));
+		
+		ArrayList<Taxi> freeTaxies = new ArrayList<>();
+		
+		for(Taxi t  : taxies ){
+			int i=1,j=1;
+			Customer before=null,after=null; 
+			if(t.getCustomerObjs().size()==0 && (Math.abs('A'-c.getPickupPoint())) <= c.getPickupTime()) {
+				freeTaxies.add(t);
+			}
+			else {
+				for(Customer AC : t.getCustomerObjs()) {
+					if(AC.getPickupTime()<c.getPickupTime()) {
+						if(i==1) {
+							before=AC;
+							i++;
+						}
+						if(AC.getPickupTime()>before.getPickupTime()) {
+							before=AC;
+						}
+					}
+					if(AC.getPickupTime()>c.getPickupTime()) {
+						if(j==1) {
+							after=AC;
+							j++;
+						}
+						if(AC.getPickupTime()<after.getPickupTime()) {
+							after=AC;
+						}
+					}
+				}
+				
+				boolean b1 = false;
+				if(before!=null) {
+					int freeTime1 =before.getDropTime();
+					if(freeTime1 <= c.getPickupTime() && freeTime1+(before.getDropPoint()-c.getPickupPoint()) <= c.getPickupTime() )  {
+						b1 = true;
+					}
+				}
+				
+				boolean b2 = false;
+				if(after!=null) {
+					int freeTime2 =c.getDropTime();
+					if(freeTime2 <= after.getPickupTime() && freeTime2+(c.getDropPoint()-after.getPickupPoint()) <= after.getPickupTime() && (Math.abs('A'-c.getPickupPoint())) <= c.getPickupTime())  {
+						b2 = true;
+					}
+				}
+				
+				if(before!=null &&  after!=null) {
+					if(b1==true && b2==true) {
+						freeTaxies.add(t);
+					}
+				}
+				if(before!=null &&  after==null) {
+					if(b1==true) {
+						freeTaxies.add(t);
+					}
+				}
+				if(before==null &&  after!=null) {
+					if(b2==true) {
+						freeTaxies.add(t);
+					}
+				}
+			}
+
+		}
+ 
+		if(freeTaxies.size()==0) {
+			System.out.println("Sorry!! No Taxies available in this pickup point.");
+			return;
+		}
+		
+		if(freeTaxies.size()==1) {
+			c.setpaidAmount(100+(((Math.abs(c.getPickupPoint()-c.getDropPoint())*15)-5)*10));
+			freeTaxies.get(0).bookTaxi(c);
+			customers.add(c);
+			System.out.println("You have to pay : " + c.getPaidAmount());
+			System.out.println("Taxi Booked Successfully.");
+			return;
+		}
+		
+		Taxi nearby = freeTaxies.get(0);
+		for(Taxi nby : freeTaxies) {
+			Customer before=null;
+			int i=1;
+			for(Customer AC : nby.getCustomerObjs()) {
+				if(AC.getPickupTime()<c.getPickupTime()) {
+					if(i==1) {
+						before=AC;
+						i++;
+					}
+					if(AC.getPickupTime()>before.getPickupTime()) {
+						before=AC;
+					}
+				}
+			}
+			Customer beforeNearby=null;
+			int j=1;
+			for(Customer AC : nearby.getCustomerObjs()) {
+				if(AC.getPickupTime()<c.getPickupTime()) {
+					if(j==1) {
+						beforeNearby=AC;
+						j++;
+					}
+					if(AC.getPickupTime()>beforeNearby.getPickupTime()) {
+						beforeNearby=AC;
+					}
+				}
+			}
+			
+			if(before==null && beforeNearby==null) {
+				if(nby.getEarnedAmount()<nearby.getEarnedAmount())
+					nearby=nby;
+			}
+			
+			if(before!=null && beforeNearby==null) {
+				if(Math.abs(before.getDropPoint()-c.getPickupPoint()) == Math.abs('A'-c.getPickupPoint())) {
+					if(nby.getEarnedAmount()<nearby.getEarnedAmount())
+						nearby=nby;
+				}
+				if(Math.abs(before.getDropPoint()-c.getPickupPoint()) < Math.abs('A'-c.getPickupPoint())) {
+					nearby=nby;
+				}
+			}
+			
+			if(before==null && beforeNearby!=null) {
+				if(Math.abs('A'-c.getPickupPoint()) == Math.abs(beforeNearby.getDropPoint()-c.getPickupPoint())) {
+					if(nby.getEarnedAmount()<nearby.getEarnedAmount())
+						nearby=nby;
+				}
+				if(Math.abs('A'-c.getPickupPoint()) < Math.abs(beforeNearby.getDropPoint()-c.getPickupPoint())) {
+					nearby=nby;
+				}
+			} 
+			 
+			if(before!=null && beforeNearby!=null) {
+				if(Math.abs(before.getDropPoint()-c.getPickupPoint()) == Math.abs(beforeNearby.getDropPoint()-c.getPickupPoint())) {
+					if(nby.getEarnedAmount()<nearby.getEarnedAmount())
+						nearby=nby;
+				}
+				if(Math.abs(before.getDropPoint()-c.getPickupPoint()) < Math.abs(beforeNearby.getDropPoint()-c.getPickupPoint())) {
+					nearby=nby;
+				}
+			}
+			
+		}
+		c.setpaidAmount(100+(((Math.abs(c.getPickupPoint()-c.getDropPoint())*15)-5)*10));
+		nearby.bookTaxi(c);
+		customers.add(c);
+		System.out.println("You have to pay : " + c.getPaidAmount());
+		System.out.println("Taxi Booked Successfully.");
+	}
+}
+
 
