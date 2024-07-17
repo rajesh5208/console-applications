@@ -1,0 +1,41 @@
+package airTrafficControl;
+import java.util.*;
+
+public class Runway{
+
+	private int runwayNo;
+	private int time;
+	private boolean status;
+	
+	Runway(int runwayNo,int time,boolean status){
+		this.runwayNo = runwayNo;
+		this.time = time;
+		this.status = status;
+		}
+	
+	public static void tempRunways(ArrayList<Runway> runways) {	
+		
+		runways.add(new Runway(1,40,true));
+		runways.add(new Runway(2,60,true));
+		runways.add(new Runway(3,80,true));
+		runways.add(new Runway(4,90,true));
+		
+	}
+	
+	public int getRunwayNo() {
+		return runwayNo;
+	}
+	
+	public int getRunwayTime() {
+		return time;
+	}
+	
+	public boolean getRunwayStatus() {
+		return status;
+	}
+	
+	public void setStatus(boolean b) {
+		status = b;
+	}
+	
+}
