@@ -1,0 +1,60 @@
+package airTrafficControl;
+import java.util.*;
+
+public class Flight {
+
+	private String flightName;
+	private int weight;
+	private int haltOrTakeOffTime;
+		
+	Flight(){}
+	
+	Flight(String flightName,int maximumWeight,int haltOrTakeOffTime){
+		this.flightName = flightName;
+		this.weight = maximumWeight;
+		this.haltOrTakeOffTime = haltOrTakeOffTime;
+	}
+	
+	public static void tempFlightsTypes(ArrayList<Flight> flightTypes) {
+
+				flightTypes.add(new Flight("atr",12,30));
+				flightTypes.add(new Flight("airbus",20,40));
+				flightTypes.add(new Flight("boeing",40,50));
+				flightTypes.add(new Flight("cargo",100,60)); 
+	}
+	
+	public void setFlightName(String s) {
+		flightName = s;
+	}
+	
+	public void setFlightWeight(int n) {
+		weight = n;
+	}
+	
+	public String getFlightName( ) {
+		return flightName;
+	}
+	
+	public int getFlightWeight( ) {
+		return weight;
+	}
+	
+	public int gethaltOrTakeOffTime( ) {
+		return haltOrTakeOffTime;
+	}
+	
+	public void calculateTime(Flight f) {
+		int per = (f.weight*100)/weight;
+		if(per>=75){
+			f.haltOrTakeOffTime = haltOrTakeOffTime + 10;
+		}
+		else if(per>50 && per<75){
+			f.haltOrTakeOffTime = haltOrTakeOffTime -((haltOrTakeOffTime*10)/100) + 10;
+		}
+		else{
+			f.haltOrTakeOffTime = haltOrTakeOffTime-((haltOrTakeOffTime*20)/100) + 10;
+		}
+
+	}
+	
+}
