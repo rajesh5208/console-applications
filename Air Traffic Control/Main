@@ -1,0 +1,149 @@
+package airTrafficControl;
+import java.util.*;
+
+public class Main {
+	
+	static Scanner scan = new Scanner(System.in);
+	
+	public static void main(String[] args) {
+		
+		ArrayList<Runway> runways = new ArrayList<>();
+		Runway.tempRunways(runways);
+		ArrayList<Flight> flightTypes = new ArrayList<>();
+		Flight.tempFlightsTypes(flightTypes);
+		int choice = 0;
+		
+		Queue<Flight> emergencyLandings = new LinkedList<>();
+		Queue<Flight> landings = new LinkedList<>();
+		Queue<Flight> takeOffs = new LinkedList<>();
+		
+		AssignWaitings aw = new AssignWaitings();
+		aw.setEmergencyLanding(emergencyLandings);
+		aw.setLanding(landings);
+		aw.setTakeOffs(takeOffs);
+		aw.setRunways(runways);
+		
+		while(true) {
+			 
+			System.out.println("\n\n1.Take off" 
+							   + "\n2.Landing"
+							   + "\n3.Emergency Landing"
+							   + "\n4.Runway details"
+							   + "\n5.Exit");
+			choice = scan.nextInt();
+			
+			switch(choice) {
+			
+				case 1: {
+					Flight f = new Flight();
+					boolean b = getDetails(f,flightTypes);
+					if(b)
+						assignRunway(f,runways,takeOffs,aw);
+					break;
+				}
+				
+				case 2:{
+					Flight f = new Flight();
+					boolean b = getDetails(f,flightTypes);
+					if(b)
+						assignRunway(f,runways,landings,aw);
+					break;
+				}
+				
+				case 3:{
+					Flight f = new Flight();
+					boolean b = getDetails(f,flightTypes);
+					if(b)
+						assignRunway(f,runways,emergencyLandings,aw);
+					break;
+				}
+				
+				case 4:{
+					for(Runway r : runways) {
+						if(r.getRunwayStatus()==true)
+							System.out.println("Runway " + r.getRunwayNo() + " is Free");
+						else
+							System.out.println("Runway " + r.getRunwayNo() + " is busy");
+					}
+					break;
+				}
+				
+				case 5:{
+					scan.close();
+					System.exit(0);
+				}
+			}
+		}
+	}
+	
+	
+	public static boolean getDetails(Flight f, ArrayList<Flight> flightTypes) {
+		
+		System.out.print("Enter Flight name : ");
+		f.setFlightName(scan.next());
+		System.out.print("Enter Flight weight : ");
+		f.setFlightWeight(scan.nextInt());
+		
+		for(Flight F: flightTypes) {
+			if(f.getFlightName().equalsIgnoreCase(F.getFlightName())) {
+				if(f.getFlightWeight()<=F.getFlightWeight()) {
+					F.calculateTime(f);
+				}
+				else {
+					System.out.println("Invalid Flight weight.");
+					return false;
+				}
+				return true;
+			}
+		}
+		System.out.println("Invalid Flight name.");
+		return false;
+	}
+	
+	
+	public static void assignRunway(Flight f, ArrayList<Runway> runways, Queue<Flight> q, AssignWaitings aw) {
+		int count1 =0;
+		for(Runway r : runways) {
+			if(r.getRunwayStatus()==false)
+				count1++;
+		}
+		
+		if(count1==4) {
+			System.out.println("You have to wait. All the runways are Busy.");
+			q.add(f); 
+			if(!(aw.isAlive()))
+				aw.start();
+			return;
+		}
+		
+		int count2=0,i=1;
+		Runway free=null;
+		for(Runway r: runways) {
+			if(f.gethaltOrTakeOffTime()<=r.getRunwayTime() && r.getRunwayStatus()) {
+				count2++;
+				if(i==1) {
+					free=r;
+					i++;
+				}
+				if(r.getRunwayTime()<free.getRunwayTime()) {
+					free=r;
+				}
+			}
+		}
+		
+		if(count2==0) {
+			System.out.println("You have to wait.Runways are Busy.");
+			q.add(f); 
+			if(!(aw.isAlive()))
+				aw.start();
+			return;
+		}
+		
+		TempThread tt = new TempThread(f.gethaltOrTakeOffTime(),free);
+		tt.start();
+		System.out.println("Runway "+free.getRunwayNo() +" is assigned");
+		
+	}
+	
+}
+
