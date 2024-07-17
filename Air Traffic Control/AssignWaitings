@@ -1,0 +1,96 @@
+package airTrafficControl;
+import java.util.*;
+
+public class AssignWaitings extends Thread{
+	private Queue<Flight> emergencyLandings;
+	private Queue<Flight> landings;
+	private Queue<Flight> takeOffs;
+	private ArrayList<Runway> runways;
+	
+	public void setEmergencyLanding(Queue<Flight> q) {
+		emergencyLandings = q;
+	}
+	
+	public void setLanding(Queue<Flight> q) {
+		landings = q;
+	}
+	
+	public void setTakeOffs(Queue<Flight> q) {
+		takeOffs = q;
+	}
+	
+	public void setRunways(ArrayList<Runway> a) {
+		runways = a;
+	}
+	
+	public void run() {
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		while(true) {
+			if(emergencyLandings.size()>0) {
+				assign(emergencyLandings);
+			}
+			else if(landings.size()>0) {
+				assign(landings);
+			}
+			else if(takeOffs.size()>0) {
+				assign(takeOffs);
+			}
+		}
+	}
+	
+	public void assign(Queue<Flight> q){
+		int count1 =0;
+		for(Runway r : runways) {
+			if(r.getRunwayStatus()==false)
+				count1++;
+		}
+		
+		if(count1==4) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}
+		
+		int count2=0,i=1;
+		Runway free=null;
+		for(Runway r : runways) {
+			if(((Flight) q.peek()).gethaltOrTakeOffTime()<=r.getRunwayTime() && r.getRunwayStatus()) {
+				count2++;
+				if(i==1) {
+					free=r;
+					i++;
+				}
+				if(r.getRunwayTime()<free.getRunwayTime()) {
+					free=r;
+				}
+			}
+		}
+		
+		if(count2==0) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}	
+		
+		
+		TempThread tt = new TempThread(q.poll().gethaltOrTakeOffTime(),free);
+		tt.start();
+		System.out.println("Runway "+free.getRunwayNo() +" is assigned");
+		
+	}
+
+	
+}
